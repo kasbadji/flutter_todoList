@@ -13,25 +13,38 @@ class TodoListItem extends StatelessWidget {
     this.onDelete,
   });
 
-  @override
+    @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Checkbox(
-        value: todo.isCompleted,
-        onChanged: (_) {
-          onToggleCompleted?.call();
-        },
+    final theme = Theme.of(context);
+    final isCompleted = todo.isCompleted;
+
+    return Card(
+      color: isCompleted ? theme.colorScheme.primary.withValues(alpha: 0.06) : null,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      title: Text(
-        todo.title,
-        style: TextStyle(
-          decoration:
-              todo.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+      child: ListTile(
+        leading: Checkbox(
+          value: isCompleted,
+          onChanged: (_) {
+            onToggleCompleted?.call();
+          },
         ),
-      ),
-      trailing: IconButton(
-        icon: const Icon(Icons.delete),
-        onPressed: onDelete,
+        title: Text(
+          todo.title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            decoration:
+                isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+            color: isCompleted ? Colors.black54 : Colors.black87,
+          ),
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete_outline),
+          color: Colors.redAccent,
+          onPressed: onDelete,
+        ),
       ),
     );
   }

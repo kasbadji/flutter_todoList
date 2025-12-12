@@ -52,46 +52,77 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title), // access the prop from the widget
+        title: Text(widget.title),
+        leading: const Icon(Icons.check_circle_outline),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TodoInput(
-                    controller: _textController,
-                    onAdd: _addTodo
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: _todos.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No todos yet. Add one!',
-                        style: TextStyle(fontSize: 18),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TodoInput(
+                controller: _textController,
+                onAdd: _addTodo,
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: _todos.isEmpty
+                    ? const _EmptyState()
+                    : ListView.builder(
+                        itemCount: _todos.length,
+                        itemBuilder: (context, index) {
+                          final todo = _todos[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: TodoListItem(
+                              todo: todo,
+                              onToggleCompleted: () => _toggleTodoCompleted(todo),
+                              onDelete: () => _removeTodoAt(index),
+                            ),
+                          );
+                        },
                       ),
-                    )
-                  : ListView.builder(
-                      itemCount: _todos.length,
-                      itemBuilder: (context, index) {
-                        final todo = _todos[index];
-                        return TodoListItem(
-                          todo: todo,
-                          onToggleCompleted: () => _toggleTodoCompleted(todo),
-                          onDelete: () => _removeTodoAt(index),
-                        );
-                      },
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(
+            Icons.inbox_outlined,
+            size: 64,
+            color: Colors.grey,
+          ),
+          SizedBox(height: 12),
+          Text(
+            'No todos yet',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black54,
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            'Add your first task above to get started.',
+            style: TextStyle(color: Colors.black45),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
